@@ -21,7 +21,7 @@ the bot is supposed to send messages.
 To get a token you will need to create an app
 [here](https://discordapp.com/developers/applications/me).
 
-After that you can add the bot to your server by replacing `YOUR_CLIENT_ID in
+After that you can add the bot to your server by replacing `YOUR_CLIENT_ID` in
 this URL with the client ID of your app:
 ```
 https://discordapp.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&scope=bot&permissions=0
