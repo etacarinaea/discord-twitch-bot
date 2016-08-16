@@ -4,17 +4,17 @@ Uses [discord.js](https://github.com/hydrabolt/discord.js/) and
 the [Twitch API](https://github.com/justintv/Twitch-API) to send a message
 whenever a streamer goes online.
 
-#### Installation 
-`cd discord-twitch-bot`
+#### Installation
+`cd discord-twitch-bot`<br />
 `npm install`
 
 #### Usage
 `node discord-twitch-bot {token} {interval} {channels}`
 
-Token is the Discord app bot user token.
+Token is the Discord app bot user token.<br />
 Interval is the interval in seconds in which to check
-every streamers online status.
-Channels is a space-separated list of *Discord* channels where
+every streamers online status.<br />
+Channels is a space-separated list of *Discord* channels where<br />
 the bot is supposed to send messages.
 
 ###### Token
