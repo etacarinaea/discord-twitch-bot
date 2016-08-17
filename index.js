@@ -87,21 +87,29 @@ function callApi(twitchName, callback){
 
 function tick(){
     for(let i = 0; i < twitchChannels.length; i++){
-        for(let a = 0; a < discordChannels.length; a++){
+        for(let a = -1; a < discordChannels.length; a++){
             if(twitchChannels[i]){
                 callApi(twitchChannels[i].name, (res)=>{
                     var index;
                     if(res && !twitchChannels[i].online && res.stream !== null){
                         try{
                             twitchChannels[i].online = true;
+                            var channel, defaultChannel;
+                            if(discordChannels.length === 0){
+                                defaultChannel = bot.channels[0];
+                            }else if(a >= -1){
+                                channel = bot.channels.get("name", discordChannels[a]);
+                            }
                             var msg = res.stream.channel.display_name +
                                       " has started streaming " +
                                       res.stream.game + "\n" +
                                       res.stream.channel.url;
-                            bot.sendMessage(bot.channels.get("name",
-                                                             discordChannels[a]),
-                                                             msg,
-                                                             sendMessageCallback);
+                            if(channel){
+                                bot.sendMessage(channel, msg, sendMessageCallback);
+                            }else if(defaultChannel){
+                                bot.sendMessage(defaultChannel, msg, sendMessageCallback);
+
+                            }
                         }
                         catch(err){
                             console.log(err);
