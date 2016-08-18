@@ -15,7 +15,7 @@ Token is the Discord app bot user token.<br />
 Interval is the interval in seconds in which to check
 every streamers online status.<br />
 Role is the role required to use add/remove.<br />
-Channels is a space-separated list of *Discord* channels where<br />
+Channels is an optional space-separated list of *Discord* channels where<br />
 the bot is supposed to send messages.
 
 ###### Token
