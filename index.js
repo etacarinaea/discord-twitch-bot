@@ -77,6 +77,7 @@ function callApi(twitchName, callback){
             }
             catch(err){
                 console.log(err);
+                return;
             }
             if(json.status == 404){
                 callback(undefined);
