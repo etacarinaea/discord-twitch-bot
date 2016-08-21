@@ -71,7 +71,13 @@ function callApi(twitchName, callback){
         });
 
         res.on("end", ()=>{
-            var json = JSON.parse(body);
+            var json;
+            try{
+                json = JSON.parse(body);
+            }
+            catch(err){
+                console.log(err);
+            }
             if(json.status == 404){
                 callback(undefined);
             }else{
