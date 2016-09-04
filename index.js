@@ -15,6 +15,25 @@ const https = require("https"),
 var twitchChannels = [];
 
 
+function leadingZero(d){
+    if(d < 10){
+        return "0" + d;
+    }else{
+        return d;
+    }
+}
+
+function print(msg, err){
+    var date = new Date();
+    var h = leadingZero(date.getHours());
+    var m = leadingZero(date.getMinutes());
+    var s = leadingZero(date.getSeconds());
+
+    console.log("[" + h + ":" + m + ":" + s + "]", msg);
+    if(err){
+        console.log(err);
+    }
+}
 
 function indexOfObjectName(array, value){
     for(let i = 0; i < array.length; i++){
@@ -28,12 +47,12 @@ function indexOfObjectName(array, value){
 
 function exitHandler(opt, err){
     if(err){
-        console.log(err);
+        print(err);
     }
     if(opt.save){
-        console.log("Saving channels to " + path + " before exiting");
+        print("Saving channels to " + path + " before exiting");
         fs.writeFileSync(path, JSON.stringify(twitchChannels));
-        console.log("done");
+        print("done");
     }
     if(opt.exit){
         process.exit();
@@ -47,15 +66,14 @@ process.on("uncaughtException", exitHandler.bind(null, {exit:true}));
 
 function sendMessageCallback(err, msg){
     if(err){
-        console.log("An error occured while sending a message: " + err);
+        print("An error occured while sending a message:", err);
     }else{
-        console.log("Sent message: " + msg);
+        print("Sent message: " + msg);
     }
 }
 
 function callApi(twitchName, callback){
     var opt = {
-        //url: apiUrl + "/streams/" + twitchChannelName,
         host: "api.twitch.tv",
         path: "/kraken/streams/" + twitchName.trim(),
         headers: {
@@ -76,7 +94,7 @@ function callApi(twitchName, callback){
                 json = JSON.parse(body);
             }
             catch(err){
-                console.log(err);
+                print(err);
                 return;
             }
             if(json.status == 404){
@@ -87,7 +105,7 @@ function callApi(twitchName, callback){
         });
 
     }).on("error", (err)=>{
-        console.log(err);
+        print(err);
     });
 }
 
@@ -98,9 +116,8 @@ function tick(){
             if(twitchChannels[i]){
                 callApi(twitchChannels[i].name, (res)=>{
                     var index;
-                    if(res && !twitchChannels[i].online && res.stream !== null){
+                    if(res && !twitchChannels[i].online && res.stream){
                         try{
-                            twitchChannels[i].online = true;
                             var channel, defaultChannel;
                             if(discordChannels.length === 0){
                                 defaultChannel = bot.channels[0];
@@ -117,9 +134,10 @@ function tick(){
                                 bot.sendMessage(defaultChannel, msg, sendMessageCallback);
 
                             }
+                            twitchChannels[i].online = true;
                         }
                         catch(err){
-                            console.log(err);
+                            print(err);
                         }
                     }else if(res.stream === null){
                         twitchChannels[i].online = false;
@@ -136,19 +154,19 @@ setInterval(tick, interval);
 
 bot.on("message", (message)=>{
     if(message.content[0] == prefix){
-        var streamer;
+        var streamer, permission;
         try{
             var role = message.server.roles.get("name", privileged);
-            var permission = message.author.hasRole(role);
+            permission = message.author.hasRole(role);
         }
         catch(err){
-            console.log(privileged + " is not a role on the server");
-            console.log(err);
+            print(privileged + " is not a role on the server", err);
         }
+        var index;
         if(message.content.substring(1,7) == "remove"){
             if(permission){
                 streamer = message.content.slice(7).trim();
-                var index = indexOfObjectName(twitchChannels, streamer);
+                index = indexOfObjectName(twitchChannels, streamer);
                 if(index != -1){
                     twitchChannels.splice(index, 1);
                     index = indexOfObjectName(twitchChannels, streamer);
@@ -166,7 +184,7 @@ bot.on("message", (message)=>{
         }else if(message.content.substring(1,4) == "add"){
             if(permission){
                 streamer = message.content.slice(4).trim();
-                var index = indexOfObjectName(twitchChannels, streamer);
+                index = indexOfObjectName(twitchChannels, streamer);
                 callApi(streamer, (res)=>{
                     if(index != -1){
                         bot.reply(message, streamer + " is already in the list.");
@@ -207,10 +225,10 @@ bot.on("message", (message)=>{
 
 bot.loginWithToken(token, (err, token)=>{
     if(err){
-        console.log("An error occured while loging in: " + err);
+        print("An error occured while loging in:", err);
     }else{
-        console.log("Logged in with token " + token);
-        console.log("Reading file " + path);
+        print("Logged in with token " + token);
+        print("Reading file " + path);
         var file = fs.readFileSync(path, {encoding:"utf-8"});
         twitchChannels = JSON.parse(file);
     }
