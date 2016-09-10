@@ -1,5 +1,5 @@
 # Logs
-logs
+log*
 *.log
 npm-debug.log*
 
@@ -38,3 +38,6 @@ jspm_packages
 
 # Twitch channel file
 .channels
+
+# Backup
+*.bak
