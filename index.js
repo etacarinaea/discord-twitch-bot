@@ -14,6 +14,13 @@ const https = require("https"),
       prefix = "/";
 var twitchChannels = [];
 
+/*
+var log = fs.createWriteStream(__dirname + "/" + Date.now() + ".log", {flags: "a"});
+
+process.stdout.pipe(log);
+process.stderr.pipe(log);
+*/
+
 
 function leadingZero(d){
     if(d < 10){
@@ -23,6 +30,7 @@ function leadingZero(d){
     }
 }
 
+// adds a timestamp before msg/err
 function print(msg, err){
     var date = new Date();
     var h = leadingZero(date.getHours());
@@ -63,14 +71,6 @@ process.on("exit", exitHandler.bind(null, {save:true}));
 process.on("SIGINT", exitHandler.bind(null, {exit:true}));
 process.on("uncaughtException", exitHandler.bind(null, {exit:true}));
 
-
-function sendMessageCallback(err, msg){
-    if(err){
-        print("An error occured while sending a message:", err);
-    }else{
-        print("Sent message: " + msg);
-    }
-}
 
 function callApi(twitchName, callback){
     var opt = {
@@ -119,19 +119,22 @@ function tick(){
                     if(res && !twitchChannels[i].online && res.stream){
                         try{
                             var channel, defaultChannel;
+                            print(discordChannels);
                             if(discordChannels.length === 0){
-                                defaultChannel = bot.channels[0];
+                                defaultChannel = bot.channels.first();
+                                print(defaultChannel);
                             }else if(a >= -1){
-                                channel = bot.channels.get("name", discordChannels[a]);
+                                channel = bot.channels.find("name", discordChannels[a]);
+                                print(channel);
                             }
                             var msg = res.stream.channel.display_name +
                                       " has started streaming " +
                                       res.stream.game + "\n" +
                                       res.stream.channel.url;
                             if(channel){
-                                bot.sendMessage(channel, msg, sendMessageCallback);
+                                channel.sendMessage(msg).then(print("Sent message: " + msg.content));
                             }else if(defaultChannel){
-                                bot.sendMessage(defaultChannel, msg, sendMessageCallback);
+                                defaultChannel.sendMessage(msg).then(print("Sent message: " + msg.content));
 
                             }
                             twitchChannels[i].online = true;
@@ -148,21 +151,19 @@ function tick(){
     }
 }
 
-
 setInterval(tick, interval);
 
 
 bot.on("message", (message)=>{
     if(message.content[0] == prefix){
-        var streamer, permission;
+        var permission;
         try{
-            var role = message.server.roles.get("name", privileged);
-            permission = message.author.hasRole(role);
+            permission = message.member.roles.exists("name", privileged);
         }
         catch(err){
             print(privileged + " is not a role on the server", err);
         }
-        var index;
+        var index, streamer;
         if(message.content.substring(1,7) == "remove"){
             if(permission){
                 streamer = message.content.slice(7).trim();
@@ -171,15 +172,15 @@ bot.on("message", (message)=>{
                     twitchChannels.splice(index, 1);
                     index = indexOfObjectName(twitchChannels, streamer);
                     if(index == -1){
-                        bot.reply(message, "Removed " + streamer + ".");
+                        message.reply("Removed " + streamer + ".");
                     }else{
-                        bot.reply(message, streamer + " isn't in the list.");
+                        message.reply(streamer + " isn't in the list.");
                     }
                 }else{
-                    bot.reply(message, streamer + " isn't in the list.");
+                    message.reply(streamer + " isn't in the list.");
                 }
             }else{
-                bot.reply(message, "you're lacking the role _" + privileged + "_.");
+                message.reply("you're lacking the role _" + privileged + "_.");
             }
         }else if(message.content.substring(1,4) == "add"){
             if(permission){
@@ -187,17 +188,17 @@ bot.on("message", (message)=>{
                 index = indexOfObjectName(twitchChannels, streamer);
                 callApi(streamer, (res)=>{
                     if(index != -1){
-                        bot.reply(message, streamer + " is already in the list.");
+                        message.reply(streamer + " is already in the list.");
                     }else if(res){
                         twitchChannels.push({name:streamer, online:false});
-                        bot.reply(message, "Added " + streamer + ".");
+                        message.reply("Added " + streamer + ".");
                         tick();
                     }else{
-                        bot.reply(message, streamer + " doesn't seem to exist.");
+                        message.reply(streamer + " doesn't seem to exist.");
                     }
                 });
             }else{
-                bot.reply(message, "you're lacking the role _" + privileged + "_.");
+                message.reply("you're lacking the role _" + privileged + "_.");
             }
         }else if(message.content.substring(1,5) == "list"){
             var msg = "";
@@ -211,26 +212,26 @@ bot.on("message", (message)=>{
                 msg += twitchChannels[i].name + " " + streamStatus + "\n";
             }
             if(!msg){
-                bot.reply(message, "The list is empty.");
+                message.reply("The list is empty.");
             }else{
-                bot.reply(message, msg);
+                message.reply(msg);
             }
         }else{
-            bot.reply(message, "Usage:\n" + prefix +
+            message.reply("Usage:\n" + prefix +
                                "(list|(add|remove) (channel name))");
         }
     }
 });
 
 
-bot.loginWithToken(token, (err, token)=>{
-    if(err){
-        print("An error occured while loging in:", err);
-    }else{
+bot.login(token).then((token)=>{
+    if(token){
         print("Logged in with token " + token);
         print("Reading file " + path);
         var file = fs.readFileSync(path, {encoding:"utf-8"});
         twitchChannels = JSON.parse(file);
+    }else{
+        print("An error occured while loging in:", err);
     }
 });
 
