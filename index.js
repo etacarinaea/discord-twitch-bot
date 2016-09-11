@@ -119,13 +119,10 @@ function tick(){
                     if(res && !twitchChannels[i].online && res.stream){
                         try{
                             var channel, defaultChannel;
-                            print(discordChannels);
                             if(discordChannels.length === 0){
                                 defaultChannel = bot.channels.first();
-                                print(defaultChannel);
                             }else if(a >= -1){
                                 channel = bot.channels.find("name", discordChannels[a]);
-                                print(channel);
                             }
                             var msg = res.stream.channel.display_name +
                                       " has started streaming " +
