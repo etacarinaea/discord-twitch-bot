@@ -130,9 +130,9 @@ function tick(){
                                       res.stream.game + "\n" +
                                       res.stream.channel.url;
                             if(channel){
-                                channel.sendMessage(msg).then(print("Sent message: " + msg.content));
+                                channel.sendMessage(msg).then(print("Sent message: " + msg));
                             }else if(defaultChannel){
-                                defaultChannel.sendMessage(msg).then(print("Sent message: " + msg.content));
+                                defaultChannel.sendMessage(msg).then(print("Sent message: " + msg));
 
                             }
                             twitchChannels[i].online = true;
