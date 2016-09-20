@@ -69,6 +69,7 @@ function exitHandler(opt, err){
 
 process.on("exit", exitHandler.bind(null, {save:true}));
 process.on("SIGINT", exitHandler.bind(null, {exit:true}));
+process.on("SIGTERM", exitHandler.bind(null, {exit:true}));
 process.on("uncaughtException", exitHandler.bind(null, {exit:true}));
 
 
