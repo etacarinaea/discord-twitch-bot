@@ -9,21 +9,23 @@ whenever a streamer goes online.
 `npm install`
 
 #### Usage
-`node discord-twitch-bot {token} {interval} {role} {channels}`
+`node discord-twitch-bot TOKEN CLIENTID INTERVAL ROLE [CHANNEL...]`
 
-Token is the Discord app bot user token.<br />
-Interval is the interval in seconds in which to check
-every streamers online status.<br />
-Role is the role required to use add/remove.<br />
-Channels is an optional space-separated list of *Discord* channels where<br />
-the bot is supposed to send messages.
+```
+TOKEN           Discord app bot user token
+CLIENTID        Twitch Client-ID
+INTERVAL        interval in seconds in which to check for changes
+ROLE            role required to use add/remove
+CHANNEL         *Discord* channel
+```
 
 ###### Token
 To get a token you will need to create an app
 [here](https://discordapp.com/developers/applications/me).
 
+###### Client-ID
+To get a twitch client-ID you will need to register a new application [here](https://www.twitch.tv/settings/connections).
+
 After that you can add the bot to your server by replacing `YOUR_CLIENT_ID` in
 this URL with the client ID of your app:
-```
-https://discordapp.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&scope=bot&permissions=0
-```
+`https://discordapp.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&scope=bot&permissions=0`

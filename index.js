@@ -1,5 +1,5 @@
 /* jshint esversion: 6 */
-// args = string:token, int:interval, string:role strings:discordChannels
+// args = string:token, string:twitchID, int:interval, string:role strings:discordChannels
 const https = require("https"),
       fs = require("fs"),
       Discord = require("discord.js"),
@@ -7,9 +7,10 @@ const https = require("https"),
       args = process.argv.slice(2),
       path = __dirname + "/.channels",
       token = args[0],
-      interval = args[1] * 1000,
-      privileged = args[2],
-      discordChannels = args.slice(3),
+      twitchClientID = args[1],
+      interval = args[2] * 1000,
+      privileged = args[3],
+      discordChannels = args.slice(4),
       apiUrl = "https://api.twitch.tv/kraken",
       prefix = "/";
 var twitchChannels = [];
@@ -59,6 +60,7 @@ function exitHandler(opt, err){
     }
     if(opt.save){
         print("Saving channels to " + path + " before exiting");
+        print(JSON.stringify(twitchChannels));
         fs.writeFileSync(path, JSON.stringify(twitchChannels));
         print("done");
     }
@@ -78,6 +80,7 @@ function callApi(twitchName, callback){
         host: "api.twitch.tv",
         path: "/kraken/streams/" + twitchName.trim(),
         headers: {
+            "Client-ID": twitchClientID,
             Accept: "application/vnd.twitchtv.v3+json"
         }
     };
