@@ -75,10 +75,10 @@ process.on("SIGTERM", exitHandler.bind(null, {exit:true}));
 process.on("uncaughtException", exitHandler.bind(null, {exit:true}));
 
 
-function callApi(twitchName, callback){
+function callApi(twitchChannel, callback){
     var opt = {
         host: "api.twitch.tv",
-        path: "/kraken/streams/" + twitchName.trim(),
+        path: "/kraken/streams/" + twitchChannel.name.trim(),
         headers: {
             "Client-ID": twitchClientID,
             Accept: "application/vnd.twitchtv.v3+json"
@@ -102,9 +102,9 @@ function callApi(twitchName, callback){
                 return;
             }
             if(json.status == 404){
-                callback(undefined);
+                callback(undefined, undefined);
             }else{
-                callback(json);
+                callback(twitchChannel, json);
             }
         });
 
@@ -114,9 +114,8 @@ function callApi(twitchName, callback){
 }
 
 
-function apiCallback(res){
-    var index;
-    if(res && !twitchChannels[i].online && res.stream){
+function apiCallback(res, twitchChannel){
+    if(res && !twitchChannel.online && res.stream){
         try{
             var channel, defaultChannel;
             if(discordChannels.length === 0){
@@ -134,13 +133,13 @@ function apiCallback(res){
                 defaultChannel.sendMessage(msg).then(print("Sent message: " + msg));
 
             }
-            twitchChannels[i].online = true;
+            twitchChannel.online = true;
         }
         catch(err){
             print(err);
         }
     }else if(res.stream === null){
-        twitchChannels[i].online = false;
+        twitchChannel.online = false;
     }
 }
 
@@ -148,7 +147,7 @@ function tick(){
     for(let i = 0; i < twitchChannels.length; i++){
         for(let a = -1; a < discordChannels.length; a++){
             if(twitchChannels[i]){
-                callApi(twitchChannels[i].name, apiCallback(res));
+                callApi(twitchChannels[i], apiCallback);
             }
         }
     }
