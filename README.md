@@ -16,7 +16,7 @@ TOKEN           Discord app bot user token
 CLIENTID        Twitch Client-ID
 INTERVAL        interval in seconds in which to check for changes
 ROLE            role required to use add/remove
-CHANNEL         *Discord* channel
+CHANNEL         *Discord* channel, uses first channel if none is specified
 ```
 
 ###### Token
@@ -24,7 +24,7 @@ To get a token you will need to create an app
 [here](https://discordapp.com/developers/applications/me).
 
 ###### Client-ID
-To get a twitch client-ID you will need to register a new application [here](https://www.twitch.tv/settings/connections).
+To get a Twitch client-ID you will need to register a new application [here](https://www.twitch.tv/settings/connections).
 
 After that you can add the bot to your server by replacing `YOUR_CLIENT_ID` in
 this URL with the client ID of your app:
