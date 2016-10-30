@@ -36,6 +36,9 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 
+# Init script
+init
+
 # Twitch channel file
 .channels
 

@@ -114,39 +114,41 @@ function callApi(twitchName, callback){
 }
 
 
+function apiCallback(res){
+    var index;
+    if(res && !twitchChannels[i].online && res.stream){
+        try{
+            var channel, defaultChannel;
+            if(discordChannels.length === 0){
+                defaultChannel = bot.channels.first();
+            }else if(a >= -1){
+                channel = bot.channels.find("name", discordChannels[a]);
+            }
+            var msg = res.stream.channel.display_name +
+                      " has started streaming " +
+                      res.stream.game + "\n" +
+                      res.stream.channel.url;
+            if(channel){
+                channel.sendMessage(msg).then(print("Sent message: " + msg));
+            }else if(defaultChannel){
+                defaultChannel.sendMessage(msg).then(print("Sent message: " + msg));
+
+            }
+            twitchChannels[i].online = true;
+        }
+        catch(err){
+            print(err);
+        }
+    }else if(res.stream === null){
+        twitchChannels[i].online = false;
+    }
+}
+
 function tick(){
     for(let i = 0; i < twitchChannels.length; i++){
         for(let a = -1; a < discordChannels.length; a++){
             if(twitchChannels[i]){
-                callApi(twitchChannels[i].name, (res)=>{
-                    var index;
-                    if(res && !twitchChannels[i].online && res.stream){
-                        try{
-                            var channel, defaultChannel;
-                            if(discordChannels.length === 0){
-                                defaultChannel = bot.channels.first();
-                            }else if(a >= -1){
-                                channel = bot.channels.find("name", discordChannels[a]);
-                            }
-                            var msg = res.stream.channel.display_name +
-                                      " has started streaming " +
-                                      res.stream.game + "\n" +
-                                      res.stream.channel.url;
-                            if(channel){
-                                channel.sendMessage(msg).then(print("Sent message: " + msg));
-                            }else if(defaultChannel){
-                                defaultChannel.sendMessage(msg).then(print("Sent message: " + msg));
-
-                            }
-                            twitchChannels[i].online = true;
-                        }
-                        catch(err){
-                            print(err);
-                        }
-                    }else if(res.stream === null){
-                        twitchChannels[i].online = false;
-                    }
-                });
+                callApi(twitchChannels[i].name, apiCallback(res));
             }
         }
     }
