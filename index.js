@@ -128,9 +128,15 @@ function apiCallback(twitchChannel, res){
                       res.stream.game + "\n" +
                       res.stream.channel.url;
             if(channel){
-                channel.sendMessage(msg).then(print("Sent message: " + msg));
+                channel.sendMessage(msg).then(
+                    print("Sent message to channel '" + channel.name + "': " +
+                          msg)
+                );
             }else if(defaultChannel){
-                defaultChannel.sendMessage(msg).then(print("Sent message: " + msg));
+                defaultChannel.sendMessage(msg).then(
+                    print("Sent message to channel '" + channel.name + "': "  +
+                          msg)
+                );
 
             }
             twitchChannel.online = true;
