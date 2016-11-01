@@ -114,7 +114,7 @@ function callApi(twitchChannel, callback){
 }
 
 
-function apiCallback(res, twitchChannel){
+function apiCallback(twitchChannel, res){
     if(res && !twitchChannel.online && res.stream){
         try{
             var channel, defaultChannel;
