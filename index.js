@@ -1,5 +1,5 @@
 /* jshint esversion: 6 */
-// args = string:token, string:twitchID, int:interval, string:role strings:discordChannels
+// args = TOKEN CLIENTID INTERVAL ROLE [CHANNEL...]
 const https = require("https"),
       fs = require("fs"),
       Discord = require("discord.js"),
@@ -14,13 +14,6 @@ const https = require("https"),
       apiUrl = "https://api.twitch.tv/kraken",
       prefix = "/";
 var twitchChannels = [];
-
-/*
-var log = fs.createWriteStream(__dirname + "/" + Date.now() + ".log", {flags: "a"});
-
-process.stdout.pipe(log);
-process.stderr.pipe(log);
-*/
 
 
 function leadingZero(d){
@@ -119,7 +112,7 @@ function apiCallback(twitchChannel, res){
         try{
             var channel, defaultChannel;
             if(discordChannels.length === 0){
-                defaultChannel = bot.channels.first();
+                defaultChannel = bot.channels.find("type", "text");
             }else if(a >= -1){
                 channel = bot.channels.find("name", discordChannels[a]);
             }
@@ -132,14 +125,14 @@ function apiCallback(twitchChannel, res){
                     print("Sent message to channel '" + channel.name + "': " +
                           msg)
                 );
+                twitchChannel.online = true;
             }else if(defaultChannel){
                 defaultChannel.sendMessage(msg).then(
-                    print("Sent message to channel '" + channel.name + "': "  +
-                          msg)
+                    print("Sent message to channel '" + defaultChannel.name +
+                          "': " + msg)
                 );
-
+                twitchChannel.online = true;
             }
-            twitchChannel.online = true;
         }
         catch(err){
             print(err);
@@ -158,8 +151,6 @@ function tick(){
         }
     }
 }
-
-setInterval(tick, interval);
 
 
 bot.on("message", (message)=>{
@@ -238,8 +229,13 @@ bot.login(token).then((token)=>{
         print("Reading file " + path);
         var file = fs.readFileSync(path, {encoding:"utf-8"});
         twitchChannels = JSON.parse(file);
+
+        // tick once on startup
+        tick();
+        setInterval(tick, interval);
     }else{
         print("An error occured while loging in:", err);
+        process.exit(1);
     }
 });
 
