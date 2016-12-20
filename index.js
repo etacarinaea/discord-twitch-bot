@@ -69,14 +69,21 @@ process.on("uncaughtException", exitHandler.bind(null, {exit:true}));
 
 
 function callApi(twitchChannel, callback){
-    var opt = {
-        host: "api.twitch.tv",
-        path: "/kraken/streams/" + twitchChannel.name.trim(),
-        headers: {
-            "Client-ID": twitchClientID,
-            Accept: "application/vnd.twitchtv.v3+json"
-        }
-    };
+    var opt;
+    try{
+        opt = {
+            host: "api.twitch.tv",
+            path: "/kraken/streams/" + twitchChannel.name.trim(),
+            headers: {
+                "Client-ID": twitchClientID,
+                Accept: "application/vnd.twitchtv.v3+json"
+            }
+        };
+    }
+    catch(err){
+        print(err);
+        return;
+    }
 
     https.get(opt, (res)=>{
         var body = "";
@@ -184,8 +191,9 @@ bot.on("message", (message)=>{
         }else if(message.content.substring(1,4) == "add"){
             if(permission){
                 streamer = message.content.slice(4).trim();
+                var channelObject = {name: streamer};
                 index = indexOfObjectName(twitchChannels, streamer);
-                callApi(streamer, (res)=>{
+                callApi(channelObject, (res)=>{
                     if(index != -1){
                         message.reply(streamer + " is already in the list.");
                     }else if(res){
