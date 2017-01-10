@@ -115,7 +115,9 @@ function callApi(twitchChannel, callback){
 
 
 function apiCallback(twitchChannel, res){
-    if(res && !twitchChannel.online && res.stream){
+    var twoMinutes = 2*60*1000;
+    if(res && !twitchChannel.online && res.stream &&
+       twitchChannel.timeSince + twoMinutes <= Date.now()){
         try{
             var channel, defaultChannel;
             if(discordChannels.length === 0){
@@ -140,6 +142,8 @@ function apiCallback(twitchChannel, res){
                 );
                 twitchChannel.online = true;
             }
+
+            twitchChannels[twitchChannel].timeSince = Date.now();
         }
         catch(err){
             print(err);
@@ -197,7 +201,8 @@ bot.on("message", (message)=>{
                     if(index != -1){
                         message.reply(streamer + " is already in the list.");
                     }else if(res){
-                        twitchChannels.push({name:streamer, online:false});
+                        twitchChannels.push({name: streamer, timeSince: 0,
+                                             online: false});
                         message.reply("Added " + streamer + ".");
                         tick();
                     }else{
