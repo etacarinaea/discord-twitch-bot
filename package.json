@@ -1,23 +1,23 @@
 {
-  "name": "twitch-bot",
-  "version": "0.1.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "yuki",
-  "license": "GPL-3.0",
-  "dependencies": {
-    "discord.js": "github:hydrabolt/discord.js"
-  },
-  "devDependencies": {},
-  "repository": {
+    "name": "twitch-bot",
+    "version": "0.1.0",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "yuki",
+    "license": "GPL-3.0",
+    "dependencies": {
+        "discord.js": "github:hydrabolt/discord.js#9.3.1"
+    },
+    "devDependencies": {},
+    "repository": {
     "type": "git",
     "url": "git+https://github.com/fuyuneko/discord-twitch-bot.git"
-  },
-  "bugs": {
+    },
+    "bugs": {
     "url": "https://github.com/fuyuneko/discord-twitch-bot/issues"
-  },
-  "homepage": "https://github.com/fuyuneko/discord-twitch-bot#readme",
-  "description": ""
+    },
+    "homepage": "https://github.com/fuyuneko/discord-twitch-bot#readme",
+    "description": ""
 }
