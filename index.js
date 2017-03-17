@@ -232,11 +232,9 @@ bot.on("message", (message)=>{
                 var channelObject = {name: streamer};
                 index = indexOfObjectByName(twitchChannels, streamer);
                 callApi(server, channelObject, (serv, chan, res)=>{
-                    console.log(res);
                     if(index != -1){
                         message.reply(streamer + " is already in the list.");
                     }else if(res){
-                        console.log(res);
                         twitchChannels.push({name: streamer, timestamp: 0,
                                              online: false});
                         message.reply("Added " + streamer + ".");
