@@ -12,11 +12,11 @@
     },
     "devDependencies": {},
     "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fuyuneko/discord-twitch-bot.git"
+        "type": "git",
+        "url": "git+https://github.com/fuyuneko/discord-twitch-bot.git"
     },
     "bugs": {
-    "url": "https://github.com/fuyuneko/discord-twitch-bot/issues"
+        "url": "https://github.com/fuyuneko/discord-twitch-bot/issues"
     },
     "homepage": "https://github.com/fuyuneko/discord-twitch-bot#readme",
     "description": ""

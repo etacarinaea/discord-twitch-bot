@@ -67,12 +67,18 @@ process.on("SIGTERM", exitHandler.bind(null, {exit:true}));
 process.on("uncaughtException", exitHandler.bind(null, {exit:true}));
 
 
-function callApi(server, twitchChannel, callback){
+function callApi(server, twitchChannel, callback, getStreamInfo){
     var opt;
     try {
+        var apiPath;
+        if(getStreamInfo){
+            apiPath = "/kraken/streams/" + twitchChannel.name.trim();
+        }else{
+            apiPath = "/kraken/channels/" + twitchChannel.name.trim();
+        }
         opt = {
             host: "api.twitch.tv",
-            path: "/kraken/streams/" + twitchChannel.name.trim(),
+            path: apiPath,
             headers: {
                 "Client-ID": twitchClientID,
                 Accept: "application/vnd.twitchtv.v3+json"
@@ -163,7 +169,7 @@ function tick(){
         for(let j = 0; j < servers[i].twitchChannels.length; j++){
             for(let k = -1; k < servers[i].discordChannels.length; k++){
                 if(servers[i].twitchChannels[j]){
-                    callApi(servers[i], servers[i].twitchChannels[j], apiCallback);
+                    callApi(servers[i], servers[i].twitchChannels[j], apiCallback, true);
                 }
             }
         }
@@ -226,9 +232,10 @@ bot.on("message", (message)=>{
                 var channelObject = {name: streamer};
                 index = indexOfObjectByName(twitchChannels, streamer);
                 callApi(server, channelObject, (serv, chan, res)=>{
+                    console.log(res);
                     if(index != -1){
                         message.reply(streamer + " is already in the list.");
-                    }else if(res.stream){
+                    }else if(res){
                         console.log(res);
                         twitchChannels.push({name: streamer, timestamp: 0,
                                              online: false});
@@ -237,7 +244,7 @@ bot.on("message", (message)=>{
                     }else{
                         message.reply(streamer + " doesn't seem to exist.");
                     }
-                });
+                }, false);
             }else{
                 message.reply("you're lacking the role _" + server.role + "_.");
             }
@@ -256,7 +263,7 @@ bot.on("message", (message)=>{
             if(!msg){
                 message.reply("The list is empty.");
             }else{
-                message.reply(msg);
+                message.reply(msg.replace(/_/g, "\\_"));
             }
 
         }else if(message.content.substring(1,10) == "configure"){
