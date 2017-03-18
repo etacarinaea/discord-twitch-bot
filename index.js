@@ -300,11 +300,12 @@ bot.on("message", (message)=>{
                     }
 
                 }else if(message.content.substring(11, 15) == "role"){
-                    if(role.replace(/\s/g, '').length === 0){
+                    if(message.content.substring(16).replace(/\s/g, '').length === 0){
                         msg += "Please specify an argument";
+                    }else{
+                        server.role = message.content.substring(16);
+                        msg += "Changed role to " + server.role;
                     }
-                    server.role = message.content.substring(16);
-                    msg += "Changed role to " + server.role;
 
                 }else if(message.content.substring(11, 18) == "channel"){
                     if(message.content.substring(19, 22) == "add"){
@@ -332,6 +333,8 @@ bot.on("message", (message)=>{
                                 msg = channel + " does not exist in list.";
                             }
                         }
+                    }else{
+                        msg = "Please specify an argument for channel";
                     }
 
                 }else{
