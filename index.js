@@ -288,8 +288,10 @@ bot.on("message", (message)=>{
                     msg += "```";
 
                 }else if(message.content.substring(11, 17) == "prefix"){
-                    var newPrefix = message.content.substring(18, 19);
-                    if(newPrefix == server.prefix){
+                    let newPrefix = message.content.substring(18, 19);
+                    if(newPrefix.replace(/\s/g, '').length === 0){
+                        msg += "Please specify an argument";
+                    }else if(newPrefix == server.prefix){
                         msg += "Prefix already is " + server.prefix;
                     }else{
                         server.lastPrefix = server.prefix;
@@ -298,13 +300,18 @@ bot.on("message", (message)=>{
                     }
 
                 }else if(message.content.substring(11, 15) == "role"){
+                    if(role.replace(/\s/g, '').length === 0){
+                        msg += "Please specify an argument";
+                    }
                     server.role = message.content.substring(16);
                     msg += "Changed role to " + server.role;
 
                 }else if(message.content.substring(11, 18) == "channel"){
                     if(message.content.substring(19, 22) == "add"){
                         let channel = message.content.substring(23);
-                        if(message.guild.channels.exists("name", channel)){
+                        if(channel.replace(/\s/g, '').length === 0){
+                            msg += "Please specify an argument";
+                        }else if(message.guild.channels.exists("name", channel)){
                             server.discordChannels.push(channel);
                             msg += "Added " + channel + " to list of channels to post in.";
                         }else{
@@ -314,7 +321,10 @@ bot.on("message", (message)=>{
                     }else if(message.content.substring(19, 25) == "remove"){
                         for(let i = server.discordChannels.length; i >= 0; i--){
                             let channel = message.content.substring(26);
-                            if(server.discordChannels[i] == channel){
+                            if(channel.replace(/\s/g, '').length === 0){
+                                msg = "Please specify an argument";
+                                break;
+                            }else if(server.discordChannels[i] == channel){
                                 server.discordChannels.splice(i, 1);
                                 msg = "Removed " + channel + " from list of channels to post in.";
                                 break;
