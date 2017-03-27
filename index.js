@@ -139,6 +139,8 @@ function apiCallback(server, twitchChannel, res){
                       res.stream.game + "\n" +
                       res.stream.channel.url;
 
+            msg = msg.replace(/_/g, "\\_");
+
             if(channels.length !== 0){
                 for(let i = 0; i < channels.length; i++){
                     channels[i].sendMessage(msg).then(
