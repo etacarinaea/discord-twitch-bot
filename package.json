@@ -1,16 +1,18 @@
 {
     "name": "twitch-bot",
-    "version": "0.1.0",
+    "version": "2.1.0",
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "yuki",
     "license": "GPL-3.0",
+
     "dependencies": {
-        "discord.js": "github:hydrabolt/discord.js#9.3.1"
+        "discord.js": "11.0.0"
     },
     "devDependencies": {},
+
     "repository": {
         "type": "git",
         "url": "git+https://github.com/fuyuneko/discord-twitch-bot.git"
