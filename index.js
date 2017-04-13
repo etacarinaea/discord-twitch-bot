@@ -134,25 +134,29 @@ function apiCallback(server, twitchChannel, res){
                     channels.push(guild.channels.find("name", server.discordChannels[i]));
                 }
             }
-            var msg = res.stream.channel.display_name +
-                      " has started streaming " +
-                      res.stream.game + "\n" +
-                      res.stream.channel.url;
-
-            msg = msg.replace(/_/g, "\\_");
+            var embed = new Discord.RichEmbed()
+                        .setColor("#9689b9")
+                        .setTitle(res.stream.channel.display_name.replace(/_/g, "\\_"))
+                        .setURL(res.stream.channel.url)
+                        .setDescription("**" + res.stream.channel.status +
+                                        "**\n" + res.stream.game)
+                        .setImage(res.stream.preview.large)
+                        .setThumbnail(res.stream.channel.logo)
+                        .addField("Viewers", res.stream.viewers, true)
+                        .addField("Followers", res.stream.channel.followers, true);
 
             if(channels.length !== 0){
                 for(let i = 0; i < channels.length; i++){
-                    channels[i].sendMessage(msg).then(
-                        print("Sent message to channel '" + channels[i].name +
-                              "': " + msg));
+                    channels[i].sendEmbed(embed).then(
+                        print("Sent embed to channel '" + channels[i].name +
+                              "'."));
                 }
                 twitchChannel.online = true;
                 twitchChannel.timestamp = Date.now();
             }else if(defaultChannel){
-                defaultChannel.sendMessage(msg).then(
-                    print("Sent message to channel '" + defaultChannel.name +
-                          "': " + msg)
+                defaultChannel.sendEmbed(embed).then(
+                    print("Sent embed to channel '" + defaultChannel.name +
+                          "'.")
                 );
                 twitchChannel.online = true;
                 twitchChannel.timestamp = Date.now();
